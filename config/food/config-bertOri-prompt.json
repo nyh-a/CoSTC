@@ -1,0 +1,77 @@
+{
+    "name": "Model_Prompt",
+    "n_gpu": 1,
+
+    "arch": {
+        "type": "Model_Prompt",
+        "args": {
+            "model_name": "/root/autodl-tmp/bert_base_uncased", 
+            "normalize": true
+        }
+    },
+    "data_loader": {
+        "type": "DataLoader_Prompt_Random",
+        "args":{
+            "data_path": "data/SemEval-Food/semeval_food.pickle.bin", 
+            "taxonomy_name": "semeval_food", 
+            "sampling_mode": 0, 
+            "batch_size": 2, 
+            "negative_size": 40, 
+            "num_workers": 1,
+            "shuffle" : true,
+            "tokenizer": "/root/autodl-tmp/bert_base_uncased"
+        }
+    },
+    "optimizer": {
+        "type": "AdamW",
+        "args":{
+            "lr": 5e-5,
+            "weight_decay": 0.01,
+            "amsgrad": true
+        }
+    },
+    "loss": "OnlineContrastiveLoss",
+
+    "metrics": [
+        "micro_mr",
+        "macro_mr",
+        "mrr_scaled_10",
+        "mrr",
+        
+        "hit_at_1",
+        "hit_at_5",
+        "hit_at_10",
+        "hit_at_50",
+        "hit_at_100",
+
+        "recall_at_1",
+        "recall_at_5",
+        "recall_at_10",
+        "recall_at_50",
+        "recall_at_100",
+
+        "precision_at_1",
+        "precision_at_5",
+        "precision_at_10"
+    ],
+
+    "lr_scheduler": {
+        "type": "StepLR",
+        "args": {
+            "step_size": 50,
+            "gamma": 0.1
+        }
+    },
+    "trainer": {
+        "type" : "Trainer_Prompt",
+        "margin": 0.4,
+        "curriculum": false,
+        "epochs": 50,
+        "save_dir": "saved/semeval_food/",
+        "save_period": 100,
+        "verbosity": 2,
+        "monitor": "max mrr_scaled_10",
+        "early_stop": 10,
+        "tensorboard": false
+    }
+}

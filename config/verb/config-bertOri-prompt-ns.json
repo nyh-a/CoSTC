@@ -1,0 +1,78 @@
+{
+    "name": "Model_Prompt_NS",
+    "n_gpu": 1,
+
+    "arch": {
+        "type": "Model_Prompt",
+        "args": {
+            "model_name": "/root/autodl-tmp/XMC_taxo/saved/wordnet_verb/models/Trainer_Prompt_Unsup/0111_102150/bert_base_uncased", 
+            "normalize": true
+        }
+    },
+    "data_loader": {
+        "type": "DataLoader_Prompt_NS",
+        "args":{
+            "data_path": "data/SemEval-Verb/wordnet_verb.pickle.bin", 
+            "taxonomy_name": "wordnet_verb", 
+            "sampling_mode": 0, 
+            "batch_size": 4, 
+            "negative_size": 30, 
+            "num_workers": 1,
+            "shuffle" : true,
+            "tokenizer": "/root/autodl-tmp/bert_base_uncased",
+            "fixed_sibling": false
+        }
+    },
+    "optimizer": {
+        "type": "AdamW",
+        "args":{
+            "lr": 5e-5,
+            "weight_decay": 0.01,
+            "amsgrad": true
+        }
+    },
+    "loss": "OnlineContrastiveLoss",
+
+    "metrics": [
+        "micro_mr",
+        "macro_mr",
+        "mrr_scaled_10",
+        "mrr",
+        
+        "hit_at_1",
+        "hit_at_5",
+        "hit_at_10",
+        "hit_at_50",
+        "hit_at_100",
+
+        "recall_at_1",
+        "recall_at_5",
+        "recall_at_10",
+        "recall_at_50",
+        "recall_at_100",
+
+        "precision_at_1",
+        "precision_at_5",
+        "precision_at_10"
+    ],
+
+    "lr_scheduler": {
+        "type": "StepLR",
+        "args": {
+            "step_size": 50,
+            "gamma": 0.1
+        }
+    },
+    "trainer": {
+        "type" : "Trainer_Prompt",
+        "margin": 0.3,
+        "curriculum": true,
+        "epochs": 50,
+        "save_dir": "saved/wordnet_verb/",
+        "save_period": 100,
+        "verbosity": 2,
+        "monitor": "max mrr_scaled_10",
+        "early_stop": 10,
+        "tensorboard": false
+    }
+}
